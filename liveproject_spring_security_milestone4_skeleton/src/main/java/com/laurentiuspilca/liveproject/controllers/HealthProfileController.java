@@ -2,9 +2,11 @@ package com.laurentiuspilca.liveproject.controllers;
 
 import com.laurentiuspilca.liveproject.entities.HealthProfile;
 import com.laurentiuspilca.liveproject.services.HealthProfileService;
-// TODO import org.springframework.security.core.Authentication;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/profile")
 public class HealthProfileController {
@@ -21,13 +23,12 @@ public class HealthProfileController {
   }
 
   @GetMapping("/{username}")
-  public HealthProfile findHealthProfile(@PathVariable String username) {
+  public HealthProfile findHealthProfile(Authentication authentication, @PathVariable String username) {
+    log.info("Authentication: " + authentication);
     return healthProfileService.findHealthProfile(username);
   }
 
   @DeleteMapping("/{username}")
-  // TODO re-enable after adding security
-  // public void deleteHealthProfile(@PathVariable String username, Authentication a) {
   public void deleteHealthProfile(@PathVariable String username ) {
     healthProfileService.deleteHealthProfile(username);
   }

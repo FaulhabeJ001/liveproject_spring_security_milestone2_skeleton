@@ -4,6 +4,7 @@ import com.laurentiuspilca.liveproject.entities.HealthProfile;
 import com.laurentiuspilca.liveproject.exceptions.HealthProfileAlreadyExistsException;
 import com.laurentiuspilca.liveproject.exceptions.NonExistentHealthProfileException;
 import com.laurentiuspilca.liveproject.repositories.HealthProfileRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class HealthProfileService {
     this.healthProfileRepository = healthProfileRepository;
   }
 
+  @PreAuthorize("#profile.username == authentication.principal.claims['user_name']")
   public void addHealthProfile(HealthProfile profile) {
     Optional<HealthProfile> healthProfile = healthProfileRepository.findHealthProfileByUsername(profile.getUsername());
 
@@ -29,6 +31,7 @@ public class HealthProfileService {
     }
   }
 
+  @PreAuthorize("#username == authentication.principal.claims['user_name'] or hasRole('ADMIN')")
   public HealthProfile findHealthProfile(String username) {
     Optional<HealthProfile> healthProfile =
             healthProfileRepository.findHealthProfileByUsername(username);
@@ -37,6 +40,7 @@ public class HealthProfileService {
             .orElseThrow(() -> new NonExistentHealthProfileException("No profile found for the provided username."));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   public void deleteHealthProfile(String username) {
     Optional<HealthProfile> healthProfile =
             healthProfileRepository.findHealthProfileByUsername(username);
